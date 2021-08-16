@@ -3,6 +3,7 @@ package com.codesoom.assignment;
 import com.codesoom.assignment.errors.TaskIdNotFoundException;
 import com.codesoom.assignment.models.Task;
 import java.io.IOException;
+import java.util.Optional;
 
 public class TaskManager {
 
@@ -45,8 +46,7 @@ public class TaskManager {
         Task task = findTask(id);
         Task content = taskFactory.toTask(title);
 
-        String newTitle = content.getTitle();
-        task.setTitle(newTitle);
+        task.setTitle(content.getTitle());
 
         return taskMapper.toJsonWith(task);
     }
@@ -59,11 +59,7 @@ public class TaskManager {
     }
 
     private Task findTask(long id) {
-        Task task = taskMap.get(id);
-        if (task == null) {
-            throw new TaskIdNotFoundException();
-        }
-
-        return task;
+        return Optional.ofNullable(taskMap.get(id))
+            .orElseThrow(TaskIdNotFoundException::new);
     }
 }

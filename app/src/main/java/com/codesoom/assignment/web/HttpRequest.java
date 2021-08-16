@@ -26,16 +26,6 @@ public class HttpRequest {
             .orElseThrow(MethodNotAllowedException::new);
     }
 
-    public long getTaskIdFromPath() {
-        String replaced = path.getTaskId();
-
-        if (!replaced.isEmpty()) {
-            return Long.parseLong(replaced);
-        }
-
-        return EMPTY_TASK_ID;
-    }
-
     public HttpResponse getHttpResponse(HttpExchange httpExchange) throws IOException {
         String body = getParsedResponseBody(httpExchange);
 
@@ -83,6 +73,16 @@ public class HttpRequest {
         }
 
         return new HttpResponseNotFound(httpExchange, NOT_FOUND_MESSAGE);
+    }
+
+    private long getTaskIdFromPath() {
+        String id = path.getTaskId();
+
+        if (!id.isEmpty()) {
+            return Long.parseLong(id);
+        }
+
+        return EMPTY_TASK_ID;
     }
 
     private boolean isReadAll() {
