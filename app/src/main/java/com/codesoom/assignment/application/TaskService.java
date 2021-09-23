@@ -1,27 +1,30 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.Task;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TaskService {
 
     private final Map<Long, Task> taskMap = new HashMap<>();
-    private Long lastId;
+    private Long lastId = 0L;
 
-    public Map<Long, Task> getTasks() {
-        return taskMap;
+    public Collection<Task> getTasks() {
+        return taskMap.values();
     }
 
     public Task getTask(Long id) {
         return taskMap.get(id);
     }
 
-    public void addTask(String title) {
+    public Task createTask(String title) {
         Long id = getNextId();
         Task task = new Task(id, title);
 
         taskMap.put(id, task);
+
+        return task;
     }
 
     public void deleteTask(Long id) {
