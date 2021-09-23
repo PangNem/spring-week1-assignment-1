@@ -9,10 +9,15 @@ public class TaskHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        int httpStatusCode = 200;
 
+        sendHttpResponse(httpExchange, httpStatusCode);
+    }
+
+    private void sendHttpResponse(HttpExchange httpExchange, int httpStatusCode)
+        throws IOException {
         OutputStream outputStream = httpExchange.getResponseBody();
 
-        int httpStatusCode = 200;
         httpExchange.sendResponseHeaders(httpStatusCode, 0);
 
         String message = "abc";
