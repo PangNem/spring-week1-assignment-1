@@ -2,6 +2,7 @@ package com.codesoom.assignment.web;
 
 import com.codesoom.assignment.application.TaskService;
 import com.codesoom.assignment.domain.Task;
+import com.codesoom.assignment.errors.TaskNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -23,6 +24,10 @@ public class TaskHttpHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String path = httpExchange.getRequestURI().getPath();
 
+        if (isTasksPathWithId(path)) {
+            checkIdNotExist(httpExchange, path);
+        }
+
         if ("GET".equals(method) && "/tasks".equals(path)) {
             Collection<Task> tasks = taskService.getTasks();
 
@@ -30,12 +35,15 @@ public class TaskHttpHandler implements HttpHandler {
         }
 
         if ("GET".equals(method) && isTasksPathWithId(path)) {
-            sendHttpResponse(httpExchange, 200);
+            long id = getId(path);
+
+            Task task = taskService.getTask(id);
+
+            sendHttpResponse(httpExchange, 200, toJson(task));
         }
 
         if ("POST".equals(method) && "/tasks".equals(path)) {
-            String body = getResponseBody(httpExchange);
-            Task task = toTask(body);
+            Task task = toTask(getResponseBody(httpExchange));
 
             String title = task.getTitle();
             Task createdTask = taskService.createTask(title);
@@ -44,14 +52,36 @@ public class TaskHttpHandler implements HttpHandler {
         }
 
         if (("PATCH".equals(method) || "PUT".equals(method)) && isTasksPathWithId(path)) {
-            sendHttpResponse(httpExchange, 200);
+            long id = getId(path);
+            Task task = toTask(getResponseBody(httpExchange));
+
+            Task updatedTask = taskService.updateTask(id, task.getTitle());
+
+            sendHttpResponse(httpExchange, 200, toJson(updatedTask));
         }
 
         if ("DELETE".equals(method) && isTasksPathWithId(path)) {
+            long id = getId(path);
+
+            taskService.deleteTask(id);
+
             sendHttpResponse(httpExchange, 204);
         }
 
         sendHttpResponse(httpExchange, 404);
+    }
+
+    private void checkIdNotExist(HttpExchange httpExchange, String path) throws IOException {
+        try {
+            taskService.checkIdExist(getId(path));
+        } catch (TaskNotFoundException e) {
+            sendHttpResponse(httpExchange, 404);
+        }
+    }
+
+    private long getId(String path) {
+        String replace = path.replace("/tasks/", "");
+        return Long.parseLong(replace);
     }
 
     private String toJson(Object value) throws JsonProcessingException {
