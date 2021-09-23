@@ -1,6 +1,6 @@
 package com.codesoom.assignment;
 
-import com.codesoom.assignment.handlers.TaskHttpHandler;
+import com.codesoom.assignment.web.TaskHttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;

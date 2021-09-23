@@ -1,4 +1,4 @@
-package com.codesoom.assignment;
+package com.codesoom.assignment.domain;
 
 public class Task {
 

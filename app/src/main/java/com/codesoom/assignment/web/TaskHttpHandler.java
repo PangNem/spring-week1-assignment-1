@@ -1,4 +1,4 @@
-package com.codesoom.assignment.handlers;
+package com.codesoom.assignment.web;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
