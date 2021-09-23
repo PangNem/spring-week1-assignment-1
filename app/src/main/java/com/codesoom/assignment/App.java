@@ -1,5 +1,6 @@
 package com.codesoom.assignment;
 
+import com.codesoom.assignment.handlers.TaskHttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +13,7 @@ public class App {
     public static void main(String[] args) throws IOException {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(PORT), BACKLOG);
 
-        httpServer.createContext("/tasks");
+        httpServer.createContext("/tasks", new TaskHttpHandler());
 
         httpServer.start();
 
